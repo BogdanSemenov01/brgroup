@@ -1,25 +1,21 @@
-import {
-  Button,
-  ButtonGroup,
-  Divider,
-  Paper,
-  Typography,
-} from "@mui/material"
+import { Button, ButtonGroup, Divider, Paper, Typography } from "@mui/material"
 import { CommentType, StoryType } from "../../types/types"
 import moment from "moment"
 
 import { Comment } from "../../components/Comment"
 import { Link, useNavigate } from "react-router-dom"
-import { useEffect } from "react"
+import { useEffect, useState } from "react"
 import useSWR from "swr"
 import { getComments } from "../../utils/api"
+import { useDebounce } from "../../hooks/useDebounce"
 
 interface AboutPageProps {
   story: StoryType | null
 }
 
 export const AboutPage: React.FC<AboutPageProps> = ({ story }) => {
-  const { data, isLoading } = useSWR(`${story?.id}`, getComments)
+  const { data, isLoading, mutate } = useSWR(`${story?.id}`, getComments)
+  const [ loading, setLoading ] = useState(false)
 
   const navigate = useNavigate()
 
@@ -42,7 +38,17 @@ export const AboutPage: React.FC<AboutPageProps> = ({ story }) => {
         >
           Back to news
         </Button>
-        <Button>Refresh comments</Button>
+        <Button
+          disabled={loading}
+          onClick={() => {
+            setLoading(true)
+            mutate()
+              .then((res) => setLoading(false))
+              .catch((res) => setLoading(false))
+          }}
+        >
+          Refresh comments
+        </Button>
       </ButtonGroup>
       <Paper>
         <Typography variant="h5">{story.title}</Typography>
@@ -64,7 +70,7 @@ export const AboutPage: React.FC<AboutPageProps> = ({ story }) => {
           <p>Loading...</p>
         ) : (
           data &&
-            data.map((item: CommentType) => <Comment com={item} key={item.id}/>)
+          data.map((item: CommentType) => <Comment com={item} key={item.id} />)
         )}
       </Paper>
     </>
