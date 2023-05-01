@@ -27,7 +27,7 @@ export const HomePage: React.FC<HomePageProps> = ({ setStory }) => {
         disabled={loading}
         onClick={() => {
           setLoading(true)
-          mutate().then(res => setLoading(false)).catch(res => setLoading(false))
+          mutate().then(() => setLoading(false)).catch(() => setLoading(false))
         }}
         sx={{ height: "50px", margin: "5px 0 5px 0", padding: 0 }}
         fullWidth

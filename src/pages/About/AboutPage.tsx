@@ -7,7 +7,6 @@ import { Link, useNavigate } from "react-router-dom"
 import { useEffect, useState } from "react"
 import useSWR from "swr"
 import { getComments } from "../../utils/api"
-import { useDebounce } from "../../hooks/useDebounce"
 
 interface AboutPageProps {
   story: StoryType | null
@@ -43,8 +42,8 @@ export const AboutPage: React.FC<AboutPageProps> = ({ story }) => {
           onClick={() => {
             setLoading(true)
             mutate()
-              .then((res) => setLoading(false))
-              .catch((res) => setLoading(false))
+              .then(() => setLoading(false))
+              .catch(() => setLoading(false))
           }}
         >
           Refresh comments
